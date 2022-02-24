@@ -4,11 +4,19 @@ import DataTable from "react-data-table-component";
 import { Row, Col, Badge, Card, Button } from "react-bootstrap";
 import FeatherIcon from "feather-icons-react";
 import { CategoryForm } from "./CategoryForm";
+import { ButtonCircle } from "../../../shared/components/ButtonCircle";
+import { CustomLoader } from "../../../shared/components/CustomLoader";
+import { FilterComponent } from "../../../shared/components/FilterComponent";
 
 export const CategoryList = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [filterText, setFilterText] = useState("");
   const [categories, setCategories] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  const filteredItems = categories.filter(
+    item => item.description && item.description.toLowerCase().includes(filterText.toLowerCase()),
+  );
 
   const getCategories = () => {
     axios({ url: "/category/", method: "GET" })
@@ -55,6 +63,15 @@ export const CategoryList = () => {
     rangeSeparatorText: "de",
   };
 
+  const searchComponent = React.useMemo(() => {
+    const clear = () => {
+      if (filterText) {
+        setFilterText("");
+      }
+    }
+    return <FilterComponent filterText={filterText} onFilter={e => setFilterText(e.target.value)} onClear={clear} />
+  });
+
   return (
     <Row className="mt-5">
       <Col>
@@ -67,22 +84,22 @@ export const CategoryList = () => {
                   isOpen={isOpen}
                   handleClose={() => setIsOpen(false)}
                 />
-                <Button variant="success" onClick={() => setIsOpen(true)}>
-                  <FeatherIcon icon="plus" />
-                </Button>
+                <ButtonCircle type={"btn btn-success btn-circle"} onClickFunct={() => { }} icon="plus" size={20} />
               </Col>
             </Row>
           </Card.Header>
           <Card.Body>
-            <Card.Text>
-              <DataTable
-                title="Listado"
-                columns={columns}
-                data={categories}
-                pagination
-                paginationComponentOptions={paginationOptions}
-              />
-            </Card.Text>
+            <DataTable
+              title="Listado"
+              columns={columns}
+              data={filteredItems}
+              pagination
+              paginationComponentOptions={paginationOptions}
+              progressPending={isLoading}
+              progressComponent={<CustomLoader />}
+              subHeader
+              subHeaderComponent={searchComponent}
+            />
           </Card.Body>
         </Card>
       </Col>
