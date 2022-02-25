@@ -1,6 +1,6 @@
 import * as instace from "axios";
 const axios = instace.create({
-  baseURL: "http://192.168.85.210:8080/api",
+  baseURL: "http://localhost:8080/api",
 });
 
 const requestHandler = (request) => {

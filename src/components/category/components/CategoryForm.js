@@ -3,8 +3,17 @@ import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import FeatherIcon from "feather-icons-react";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import Alert, {
+  msjConfirmacion,
+  titleConfirmacion,
+  titleError,
+  msjError,
+  titleExito,
+  msjExito,
+} from "../../../shared/plugins/alert";
+import axios from "../../../shared/plugins/axios";
 
-export const CategoryForm = ({ isOpen, handleClose }) => {
+export const CategoryForm = ({ isOpen, handleClose, setCategories }) => {
   const formik = useFormik({
     initialValues: {
       description: "",
@@ -17,18 +26,68 @@ export const CategoryForm = ({ isOpen, handleClose }) => {
       description: yup.string().required("Campo obligatorio"),
     }),
     onSubmit: (values) => {
-      console.log(values);
+      Alert.fire({
+        title: titleConfirmacion,
+        text: msjConfirmacion,
+        confirmButtonText: "Aceptar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#198754",
+        cancelButtonColor: "#dc3545",
+        showCancelButton: true,
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        icon: "warning",
+        preConfirm: () => {
+          return axios({
+            url: "/category/",
+            method: "POST",
+            data: JSON.stringify(values),
+          })
+            .then((response) => {
+              console.log(response);
+              if (!response.error) {
+                setCategories((categories) => [...categories, response.data]);
+                handleCloseForm();
+                Alert.fire({
+                  title: titleExito,
+                  text: msjExito,
+                  icon: "success",
+                  confirmButtonColor: "#198754",
+                  confirmButtonText: "Aceptar",
+                });
+              }
+              return response;
+            })
+            .catch((error) => {
+              Alert.fire({
+                title: titleError,
+                text: msjError,
+                confirmButtonColor: "#198754",
+                icon: "error",
+                confirmButtonText: "Aceptar",
+              });
+            });
+        },
+        backdrop: true,
+        allowOutsideClick: !Alert.isLoading,
+      });
     },
   });
+
+  const handleCloseForm = () => {
+    formik.resetForm();
+    handleClose();
+  };
+
   return (
-    <Modal show={isOpen} onHide={handleClose}>
+    <Modal show={isOpen} onHide={handleCloseForm}>
       <Modal.Header closeButton>
         <Modal.Title>Registrar categoría</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
           <Form.Group className="mb-4">
-            <Form.Label>Nombre</Form.Label>
+            <Form.Label className="form-label">Nombre</Form.Label>
             <Form.Control
               name="description"
               placeholder="Gaming"
@@ -36,13 +95,17 @@ export const CategoryForm = ({ isOpen, handleClose }) => {
               onChange={formik.handleChange}
             />
             {formik.errors.description ? (
-              <span>{formik.errors.description}</span>
+              <span className="error-text">{formik.errors.description}</span>
             ) : null}
           </Form.Group>
           <Form.Group className="mb-4">
             <Row>
               <Col className="text-end">
-                <Button variant="danger" type="button" onClick={handleClose}>
+                <Button
+                  variant="danger"
+                  type="button"
+                  onClick={handleCloseForm}
+                >
                   <FeatherIcon icon={"x"} />
                   &nbsp; Cerrar
                 </Button>
@@ -50,7 +113,7 @@ export const CategoryForm = ({ isOpen, handleClose }) => {
                   variant="success"
                   className="ms-3"
                   type="submit"
-                  disabled={formik.isValid}
+                  disabled={!(formik.isValid && formik.dirty)}
                 >
                   <FeatherIcon icon={"check"} />
                   &nbsp; Guardar

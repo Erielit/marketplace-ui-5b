@@ -15,7 +15,9 @@ export const CategoryList = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const filteredItems = categories.filter(
-    item => item.description && item.description.toLowerCase().includes(filterText.toLowerCase()),
+    (item) =>
+      item.description &&
+      item.description.toLowerCase().includes(filterText.toLowerCase())
   );
 
   const getCategories = () => {
@@ -56,6 +58,34 @@ export const CategoryList = () => {
           </Badge>
         ),
     },
+    {
+      name: "Acciones",
+      cell: (row) => (
+        <>
+          <ButtonCircle
+            icon="edit"
+            size={16}
+            type="btn btn-warning btn-circle me-2"
+            onClickFunct={() => {}}
+          />
+          {row.status.description === "Activo" ? (
+            <ButtonCircle
+              icon="trash"
+              size={16}
+              type="btn btn-danger btn-circle"
+              onClickFunct={() => {}}
+            />
+          ) : (
+            <ButtonCircle
+              icon="check"
+              size={16}
+              type="btn btn-success btn-circle"
+              onClickFunct={() => {}}
+            />
+          )}
+        </>
+      ),
+    },
   ];
 
   const paginationOptions = {
@@ -68,8 +98,14 @@ export const CategoryList = () => {
       if (filterText) {
         setFilterText("");
       }
-    }
-    return <FilterComponent filterText={filterText} onFilter={e => setFilterText(e.target.value)} onClear={clear} />
+    };
+    return (
+      <FilterComponent
+        filterText={filterText}
+        onFilter={(e) => setFilterText(e.target.value)}
+        onClear={clear}
+      />
+    );
   });
 
   return (
@@ -83,8 +119,14 @@ export const CategoryList = () => {
                 <CategoryForm
                   isOpen={isOpen}
                   handleClose={() => setIsOpen(false)}
+                  setCategories={setCategories}
                 />
-                <ButtonCircle type={"btn btn-success btn-circle"} onClickFunct={() => { }} icon="plus" size={20} />
+                <ButtonCircle
+                  type={"btn btn-success btn-circle"}
+                  onClickFunct={() => setIsOpen(true)}
+                  icon="plus"
+                  size={20}
+                />
               </Col>
             </Row>
           </Card.Header>
