@@ -2,11 +2,18 @@ import React, { useEffect, useState } from "react";
 import axios from "../../../shared/plugins/axios";
 import DataTable from "react-data-table-component";
 import { Row, Col, Badge, Card, Button } from "react-bootstrap";
-import FeatherIcon from "feather-icons-react";
 import { CategoryForm } from "./CategoryForm";
 import { ButtonCircle } from "../../../shared/components/ButtonCircle";
 import { CustomLoader } from "../../../shared/components/CustomLoader";
 import { FilterComponent } from "../../../shared/components/FilterComponent";
+import Alert, {
+  msjConfirmacion,
+  msjError,
+  msjExito,
+  titleConfirmacion,
+  titleError,
+  titleExito,
+} from "../../../shared/plugins/alert";
 
 export const CategoryList = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +36,70 @@ export const CategoryList = () => {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const statusChange = (category) => {
+    Alert.fire({
+      title: titleConfirmacion,
+      text: msjConfirmacion,
+      confirmButtonText: "Aceptar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#198754",
+      cancelButtonColor: "#dc3545",
+      showCancelButton: true,
+      reverseButtons: true,
+      showLoaderOnConfirm: true,
+      icon: "warning",
+      backdrop: true,
+      allowOutsideClick: !Alert.isLoading,
+      preConfirm: () => {
+        let categoryUpdate = {};
+        if (category.status.description === "Activo") {
+          categoryUpdate = {
+            ...category,
+            status: { id: 2, description: "Inactivo" },
+          };
+        } else {
+          categoryUpdate = {
+            ...category,
+            status: { id: 1, description: "Activo" },
+          };
+        }
+        return axios({
+          url: "/category/",
+          method: "PUT",
+          data: JSON.stringify(categoryUpdate),
+        })
+          .then((response) => {
+            if (response.error) {
+              Alert.fire({
+                title: titleError,
+                text: msjError,
+                icon: "error",
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#198754",
+              });
+            } else {
+              let categoriesTemp = categories.filter(
+                (it) => it.id != category.id
+              );
+              console.log(categoriesTemp);
+              setCategories([...categoriesTemp, categoryUpdate]);
+              Alert.fire({
+                title: titleExito,
+                text: msjExito,
+                icon: "success",
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#198754",
+              });
+            }
+            return response;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+    });
   };
 
   useEffect(() => {
@@ -70,17 +141,17 @@ export const CategoryList = () => {
           />
           {row.status.description === "Activo" ? (
             <ButtonCircle
-              icon="trash"
+              icon="trash-2"
               size={16}
               type="btn btn-danger btn-circle"
-              onClickFunct={() => {}}
+              onClickFunct={() => statusChange(row)}
             />
           ) : (
             <ButtonCircle
-              icon="check"
+              icon="check-circle"
               size={16}
               type="btn btn-success btn-circle"
-              onClickFunct={() => {}}
+              onClickFunct={() => statusChange(row)}
             />
           )}
         </>
