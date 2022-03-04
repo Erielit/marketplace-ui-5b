@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../../shared/plugins/axios";
 import DataTable from "react-data-table-component";
-import { Row, Col, Badge, Card, Button } from "react-bootstrap";
+import { Row, Col, Badge, Card } from "react-bootstrap";
 import { CategoryForm } from "./CategoryForm";
 import { ButtonCircle } from "../../../shared/components/ButtonCircle";
 import { CustomLoader } from "../../../shared/components/CustomLoader";
@@ -14,12 +14,15 @@ import Alert, {
   titleError,
   titleExito,
 } from "../../../shared/plugins/alert";
+import { CategoryFormEdit } from "./CategoryFormEdit";
 
 export const CategoryList = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [filterText, setFilterText] = useState("");
   const [categories, setCategories] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [categorySelected, setCategorySelected] = useState({});
 
   const filteredItems = categories.filter(
     (item) =>
@@ -81,7 +84,7 @@ export const CategoryList = () => {
               });
             } else {
               let categoriesTemp = categories.filter(
-                (it) => it.id != category.id
+                (it) => it.id !== category.id
               );
               console.log(categoriesTemp);
               setCategories([...categoriesTemp, categoryUpdate]);
@@ -137,7 +140,10 @@ export const CategoryList = () => {
             icon="edit"
             size={16}
             type="btn btn-warning btn-circle me-2"
-            onClickFunct={() => {}}
+            onClickFunct={() => {
+              setCategorySelected(row);
+              setIsEditing(true);
+            }}
           />
           {row.status.description === "Activo" ? (
             <ButtonCircle
@@ -177,7 +183,7 @@ export const CategoryList = () => {
         onClear={clear}
       />
     );
-  });
+  }, [filterText]);
 
   return (
     <Row className="mt-5">
@@ -191,6 +197,12 @@ export const CategoryList = () => {
                   isOpen={isOpen}
                   handleClose={() => setIsOpen(false)}
                   setCategories={setCategories}
+                />
+                <CategoryFormEdit
+                  isOpen={isEditing}
+                  onClose={() => setIsEditing(false)}
+                  setCategories={setCategories}
+                  {...categorySelected}
                 />
                 <ButtonCircle
                   type={"btn btn-success btn-circle"}

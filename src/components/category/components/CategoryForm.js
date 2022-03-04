@@ -26,6 +26,7 @@ export const CategoryForm = ({ isOpen, handleClose, setCategories }) => {
       description: yup.string().required("Campo obligatorio"),
     }),
     onSubmit: (values) => {
+      
       Alert.fire({
         title: titleConfirmacion,
         text: msjConfirmacion,
@@ -71,6 +72,7 @@ export const CategoryForm = ({ isOpen, handleClose, setCategories }) => {
         backdrop: true,
         allowOutsideClick: !Alert.isLoading,
       });
+
     },
   });
 
