@@ -112,6 +112,7 @@ export const LoginScreen = () => {
                             name="password"
                             value={formik.values.password}
                             onChange={formik.handleChange}
+                            type="password"
                           />
                           {formik.errors.password ? (
                             <span>{formik.errors.password}</span>
@@ -139,8 +140,11 @@ export const LoginScreen = () => {
                       </Form>
                     </div>
                   </Col>
-                  <Col className="col-lg-6">
-                    
+                  <Col className="col-lg-6 d-flex align-items-center gradient-custom-2">
+                    <div className="text-white px-3 py-4 p-md-5 mx-md-4">
+                      <h4>Marketplace | Aplicaciones Web</h4>
+                      <p className="small mb-0">Lorem ipsuasdasdasdasdasdasdsadassdasdasdsdsdfwqerewrxcvn</p>
+                    </div>
                   </Col>
                 </Row>
               </div>
