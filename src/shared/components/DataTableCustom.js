@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
+import { CustomLoader } from "./CustomLoader";
 import { FilterComponent } from "./FilterComponent";
 
 export const DataTableCustom = ({ columns, data, isLoading }) => {

@@ -120,7 +120,7 @@ export const LoginScreen = () => {
                         </Form.Group>
                         <Form.Group className="form-outline mb-5">
                           <div className="text-end pt-1 pb-1">
-                            <a href="#" className="text-muted">
+                            <a href="#!" className="text-muted">
                               ¿Olvidaste tu contraseña?
                             </a>
                           </div>
