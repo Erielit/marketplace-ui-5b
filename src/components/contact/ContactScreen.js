@@ -7,6 +7,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import img from "../../assets/img/river.jpg";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import Alert, {
+  msjConfirmacion,
+  msjError,
+  msjExito,
+  titleConfirmacion,
+  titleError,
+  titleExito,
+} from "../../shared/plugins/alert";
+import axios from "../../shared/plugins/axios";
 
 export const ContactScreen = () => {
   const bg = {
@@ -19,12 +28,12 @@ export const ContactScreen = () => {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
+      fullname: "",
       email: "",
       comments: "",
     },
     validationSchema: yup.object().shape({
-      name: yup
+      fullname: yup
         .string()
         .required("Campo obligatorio")
         .min(4, "Mínimo cuatro caracteres"),
@@ -38,7 +47,49 @@ export const ContactScreen = () => {
         .min(4, "Mínimo cuatro caracteres"),
     }),
     onSubmit: (values) => {
-      console.log(values);
+      Alert.fire({
+        title: titleConfirmacion,
+        text: msjConfirmacion,
+        confirmButtonText: "Aceptar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#198754",
+        cancelButtonColor: "#dc3545",
+        showCancelButton: true,
+        reverseButtons: true,
+        showLoaderOnConfirm: true,
+        icon: "warning",
+        preConfirm: () => {
+          return axios({
+            url: "/contact/",
+            method: "POST",
+            data: JSON.stringify(values),
+          })
+            .then((response) => {
+              console.log(response);
+              if (!response.error) {
+                Alert.fire({
+                  title: titleExito,
+                  text: msjExito,
+                  icon: "success",
+                  confirmButtonColor: "#198754",
+                  confirmButtonText: "Aceptar",
+                });
+              }
+              return response;
+            })
+            .catch((error) => {
+              Alert.fire({
+                title: titleError,
+                text: msjError,
+                confirmButtonColor: "#198754",
+                icon: "error",
+                confirmButtonText: "Aceptar",
+              });
+            });
+        },
+        backdrop: true,
+        allowOutsideClick: !Alert.isLoading,
+      });
     },
   });
 
@@ -49,7 +100,7 @@ export const ContactScreen = () => {
           <Form.Group className="mb-4">
             <Form.Label className="">Nombre completo</Form.Label>
             <Form.Control
-              name="name"
+              name="fullname"
               placeholder="Mike Moreno"
               value={formik.values.name}
               onChange={formik.handleChange}
