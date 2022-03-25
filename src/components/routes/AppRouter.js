@@ -45,6 +45,7 @@ export const AppRouter = () => {
                       path="/subcategory"
                       element={<SubcategoryScreen />}
                     />
+                    <Route path={"/products"} element={<ProductScreen />} />
                     <Route path={"/"} element={<ProductScreen />} />
                     <Route path="*" element={<div>Error 404</div>} />
                   </Routes>

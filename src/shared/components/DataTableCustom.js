@@ -37,6 +37,7 @@ export const DataTableCustom = ({ columns, data, isLoading }) => {
       title="Listado"
       columns={columns}
       data={filteredItems}
+      noDataComponent="No hay registros"
       pagination
       paginationComponentOptions={paginationOptions}
       progressPending={isLoading}

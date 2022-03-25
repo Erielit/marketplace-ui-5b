@@ -1,6 +1,5 @@
-import { Button } from "bootstrap";
 import React, { useContext } from "react";
-import { Container, Image, Nav, Navbar } from "react-bootstrap";
+import { Container, Image, Nav, Navbar, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../components/auth/authContext";
 import img from "../../assets/img/marketplace.png";
