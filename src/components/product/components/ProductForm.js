@@ -20,7 +20,7 @@ export const ProductForm = ({ isOpen, handleClose, getProducts }) => {
   const [filesBase64, setFilesBase64] = useState([]);
 
   const getSubcategories = (category) => {
-    axios({ url: `/subcategory/category/${category}`, method: "GET" })
+    axios({ url: `/subcategory/all/${category}`, method: "GET" })
       .then((response) => {
         setSubcategories(response.data);
       })

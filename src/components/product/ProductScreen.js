@@ -13,13 +13,15 @@ import Alert, {
   msjExito,
 } from "../../shared/plugins/alert";
 import { ProductForm } from "./components/ProductForm";
+import { ProductDetails } from "./components/ProductDetails";
 
 export const ProductScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [productSelected, setProductSelected] = useState({});
   const columns = [
     {
       name: "#",
@@ -67,7 +69,10 @@ export const ProductScreen = () => {
           <ButtonCircle
             type={"btn btn-circle btn-info me-1"}
             icon="search"
-            onClickFunct={() => {}}
+            onClickFunct={() => {
+              setProductSelected(row);
+              setIsDetailsOpen(true);
+            }}
             size={18}
           />
           <ButtonCircle
@@ -148,7 +153,6 @@ export const ProductScreen = () => {
       ),
     },
   ];
-
   const getProducts = () => {
     axios({ url: "/product/", method: "GET" })
       .then((response) => {
@@ -160,40 +164,46 @@ export const ProductScreen = () => {
         console.log(error);
       });
   };
-
   useEffect(() => {
     setIsLoading(true);
     document.title = "MP | Productos";
     getProducts();
   }, []);
-
   return (
-    <Card className="mt-5">
-      <Card.Header as={"h5"}>
-        <Row className="mt-1">
-          <Col>Productos</Col>
-          <Col className="text-end">
-            <ProductForm
-              getProducts={getProducts}
-              isOpen={isCreating}
-              handleClose={() => setIsCreating(false)}
-            />
-            <ButtonCircle
-              type={"btn btn-circle btn-success"}
-              icon="plus"
-              size={24}
-              onClickFunct={() => setIsCreating(true)}
-            />
-          </Col>
-        </Row>
-      </Card.Header>
-      <Card.Body>
-        <DataTableCustom
-          columns={columns}
-          data={products}
-          isLoading={isLoading}
-        />
-      </Card.Body>
-    </Card>
+    <>
+      {" "}
+      <Card className="mt-5">
+        <Card.Header as={"h5"}>
+          <Row className="mt-1">
+            <Col>Productos</Col>
+            <Col className="text-end">
+              <ProductForm
+                getProducts={getProducts}
+                isOpen={isCreating}
+                handleClose={() => setIsCreating(false)}
+              />
+              <ButtonCircle
+                type={"btn btn-circle btn-success"}
+                icon="plus"
+                size={24}
+                onClickFunct={() => setIsCreating(true)}
+              />
+            </Col>
+          </Row>
+        </Card.Header>
+        <Card.Body>
+          <DataTableCustom
+            columns={columns}
+            data={products}
+            isLoading={isLoading}
+          />
+        </Card.Body>
+      </Card>
+      <ProductDetails
+        isOpen={isDetailsOpen}
+        handleClose={() => setIsDetailsOpen(false)}
+        {...productSelected}
+      />
+    </>
   );
 };
